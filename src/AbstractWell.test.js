@@ -12,7 +12,7 @@ it("Creates a default well with all free spaces", () => {
    let allFree = true;
    for (let x = 0; x < well.width; x++) {
       for (let y = 0; y < well.depth; y++) {
-         allFree = allFree && well.isFree(x,y);
+         allFree = allFree && well.isFree(x, y);
       }
    }
    expect(allFree).toBeTruthy();
@@ -34,7 +34,7 @@ it("A new piece doesn't cause collision", () => {
 });
 
 it("An out of bound piece causes collision", () => {
-   const well = new AbstractWell();
+   const well = new AbstractWell(10);
    const piece = new AbstractPiece();
    const pieceRight = piece.moveRight(10);
    const pieceLeft = piece.moveLeft(10);
@@ -42,10 +42,26 @@ it("An out of bound piece causes collision", () => {
    expect(well.collision(pieceLeft)).toBeTruthy();
 });
 
-it("Piece put on an already occupied place causes collision", () => {
+it("Piece put in an already occupied place causes collision", () => {
    const well = new AbstractWell();
    const piece = new AbstractPiece("O");
    const anotherPiece = new AbstractPiece("O");
-   well.putDown(piece);
-   expect(well.collision(anotherPiece)).toBeTruthy();
+   const changedWell = well.putDown(piece);
+   expect(changedWell.collision(anotherPiece)).toBeTruthy();
+});
+
+it("Detects a full line", () => {
+   const well = new AbstractWell(10);
+   const noFullLines = well.prun();
+   expect(noFullLines.number).toEqual(0);
+   const [piece1,
+      piece2,
+      piece3,] = [
+         new AbstractPiece("O", [1, 1]),
+         new AbstractPiece("I", [4, 1]),
+         new AbstractPiece("I", [8, 1]),
+      ];
+   const updatedWell = well.putDown(piece1).putDown(piece2).putDown(piece3);
+   const fullLines = updatedWell.prun();
+   expect(fullLines.number).toEqual(1);
 });

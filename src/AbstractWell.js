@@ -1,3 +1,5 @@
+import { arrayCopy } from './utils';
+
 class AbstractWell {
 	/**
 	 * 
@@ -8,6 +10,18 @@ class AbstractWell {
 		this.depth = width * 2 + 2;
 		this.fields = Array(this.depth);
 		this.fields.fill(Array(this.width).fill(1));
+	}
+
+	getDeadBricks = function () {
+		const deadBricks = [];
+		for (let x = 0; x < this.width; x++) {
+			for (let y = 0; y < this.depth; y++) {
+				if (!this.isFree(x, y)) {
+					deadBricks.push([x, y]);
+				}
+			}
+		}
+		return deadBricks;
 	}
 
 	/**
@@ -38,9 +52,42 @@ class AbstractWell {
 		return !noCollision;
 	}
 
-	putDown = function(piece) {
+	putDown = function (piece) {
 		const absoluteXY = piece.getAbsoluteXY();
-		absoluteXY.forEach(([x, y]) => this.writeSpace(x, y) );
+		const newWell = new AbstractWell(this.width);
+		newWell.fields = arrayCopy(this.fields);
+		absoluteXY.forEach(([x, y]) => newWell.writeSpace(x, y));
+		return newWell;
+	}
+
+	isOccupiedField = (acc, v) => (acc && !v);
+
+	isNotFullLine = (arr) => !arr.reduce(this.isOccupiedField, true);
+
+	newRow = (width) => Array(this.width).fill(1);
+
+	/**
+	 * Finds full lines, deletes if any, tops up with empty rows if necessary,
+	 * returns a number and a new well.
+	 */
+	prun = function () {
+		const fields = this.fields.filter(this.isNotFullLine);
+		const fullLines = this.depth - fields.length;
+		if(fullLines === this.depth) {
+			return {
+				number: 0,
+				well: this,
+			}
+		}
+		const newWell = new AbstractWell(this.width);
+		for(let i = 0, len = this.depth - fields.length; i < len; i++) {
+			fields.unshift(this.newRow(this.width));
+		}
+		newWell.fields = fields;
+		return {
+			number: fullLines,
+			well: newWell,
+		}
 	}
 }
 

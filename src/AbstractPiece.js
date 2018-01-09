@@ -1,3 +1,5 @@
+import { arrayCopy } from './utils';
+
 const defaultPosition = [5, 0];
 const pieceTypes = [
    { type: "S", blocks: [[-1, 1], [0, 1], [0, 0], [1, 0]], },
@@ -13,12 +15,6 @@ const randomPiece = () => {
    const index = Math.floor(Math.random() * pieceTypes.length);
    return pieceTypes[index];
 }
-
-/**
- * Deep copies an array.
- * @param {Array} arr 
- */
-const arrayCopy = (arr) => JSON.parse(JSON.stringify(arr));
 
 class AbstractPiece {
    /**

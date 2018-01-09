@@ -1,0 +1,10 @@
+.brick {
+	width: 24px;
+	height: 24px;
+	background-color: darkgoldenrod;
+	position: absolute;
+}
+
+.brick_dead {
+	background-color: darkblue;
+}
