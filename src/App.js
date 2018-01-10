@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import MouseTrap from 'mousetrap';
-import logo from './logo.svg';
 import './App.css';
 import { AbstractWell } from './AbstractWell';
 import { AbstractPiece } from './AbstractPiece';
-import { Brick } from './Brick';
 import { Well } from './Well';
+const defaultInterval = 150;
 
 class App extends Component {
    constructor() {
@@ -16,13 +15,15 @@ class App extends Component {
          nextPiece: new AbstractPiece(),
          currentPiece: well.pickUp(new AbstractPiece()),
          score: 0,
+         gameLoopId: 0,
       };
       MouseTrap.bind('a', this.movePieceLeft);
       MouseTrap.bind('d', this.movePieceRight);
       MouseTrap.bind('s', this.rotatePiece);
-      MouseTrap.bind('space', this.movePieceDown);
+      MouseTrap.bind('p', this.togglePause);
+      MouseTrap.bind('space', this.gameStep);
       MouseTrap.bind('enter', this.nextPiece);
-      setInterval(this.movePieceDown, 100);
+      this.state.gameLoopId = setInterval(this.gameStep, 150);
    }
 
    transformPiece = (transformedPiece) => {
@@ -44,9 +45,9 @@ class App extends Component {
       this.transformPiece(movedPiece);
    }
 
-   movePieceDown = () => {
+   gameStep = () => {
       const movedPiece = this.state.currentPiece.moveDown();
-      if(this.state.well.collision(movedPiece)) {
+      if (this.state.well.collision(movedPiece)) {
          this.nextPiece();
       } else {
          this.transformPiece(movedPiece);
@@ -74,12 +75,33 @@ class App extends Component {
          },
       );
       this.setState(newState);
+      if (newState.well.collision(newState.currentPiece)) {
+         this.stopGame();
+      }
+   }
+
+   stopGame = () => {
+      clearInterval(this.state.gameLoopId);
+      this.setState(Object.assign({}, this.state, { gameLoopId: 0 }))
+   }
+
+   startGame = () => {
+      const gameLoopId = setInterval(this.gameStep, 150);
+      this.setState(Object.assign({}, this.state, { gameLoopId }));
+   }
+
+   togglePause = () => {
+      if (this.state.gameLoopId) {
+         this.stopGame()
+      } else {
+         this.startGame();
+      }
    }
 
    render() {
       return (
          <div className="App">
-         <h2 className='score'>Score: {this.state.score}</h2>
+            <h2 className='score'>Score: {this.state.score}</h2>
             <Well
                well={this.state.well}
                piece={this.state.currentPiece.getAbsoluteXY()} />

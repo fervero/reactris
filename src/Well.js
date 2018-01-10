@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './Well.css';
 import { Brick } from './Brick';
 
@@ -8,10 +8,10 @@ function Well(props) {
    const depth = props.well.depth;
    const deadBricks = props.well.getDeadBricks();
 
-   const drawBrick = ([coordX, coordY], i) =>
-      (<Brick x={coordX} y={coordY} key={"piece_" + i} />);
-   const drawDeadBrick = ([coordX, coordY], i ) =>
-      (<Brick dead="true" x={coordX} y={coordY} key={"fallen_" + i} />);
+   const drawBrick = ([coordX, coordY, id], i) =>
+      (<Brick x={coordX} y={coordY} key={"l" + i} />);
+   const drawDeadBrick = ([coordX, coordY, id], i) =>
+      (<Brick dead="true" x={coordX} y={coordY} key={"f"+id} />);
 
    return (
       <div className='well' style={{ width: width * 24, height: depth * 24 }}>
