@@ -27,6 +27,6 @@
   to { transform: rotate(80deg); }
 }
 
-.well {
-  font-family: Courier New, Courier, monospace;
+.score {
+  margin-top: 0;
 }

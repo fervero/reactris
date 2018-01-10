@@ -10,10 +10,11 @@ import { Well } from './Well';
 class App extends Component {
    constructor() {
       super();
+      const well = new AbstractWell();
       this.state = {
-         well: new AbstractWell(),
+         well,
          nextPiece: new AbstractPiece(),
-         currentPiece: new AbstractPiece(),
+         currentPiece: well.pickUp(new AbstractPiece()),
          score: 0,
       };
       MouseTrap.bind('a', this.movePieceLeft);
@@ -21,6 +22,7 @@ class App extends Component {
       MouseTrap.bind('s', this.rotatePiece);
       MouseTrap.bind('space', this.movePieceDown);
       MouseTrap.bind('enter', this.nextPiece);
+      setInterval(this.movePieceDown, 100);
    }
 
    transformPiece = (transformedPiece) => {
@@ -44,7 +46,11 @@ class App extends Component {
 
    movePieceDown = () => {
       const movedPiece = this.state.currentPiece.moveDown();
-      this.transformPiece(movedPiece);
+      if(this.state.well.collision(movedPiece)) {
+         this.nextPiece();
+      } else {
+         this.transformPiece(movedPiece);
+      }
    }
 
    rotatePiece = () => {
@@ -61,8 +67,8 @@ class App extends Component {
          {},
          this.state,
          {
-            well: well,
-            currentPiece: this.state.nextPiece,
+            well,
+            currentPiece: well.pickUp(this.state.nextPiece),
             nextPiece: new AbstractPiece(),
             score: newScore,
          },
@@ -73,7 +79,7 @@ class App extends Component {
    render() {
       return (
          <div className="App">
-         <h1>Score: {this.state.score}</h1>
+         <h2 className='score'>Score: {this.state.score}</h2>
             <Well
                well={this.state.well}
                piece={this.state.currentPiece.getAbsoluteXY()} />

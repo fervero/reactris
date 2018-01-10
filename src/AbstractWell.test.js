@@ -29,7 +29,8 @@ it("Out of bounds spaces are not free", () => {
 
 it("A new piece doesn't cause collision", () => {
    const well = new AbstractWell();
-   const piece = new AbstractPiece();
+   const piece = well.pickUp(new AbstractPiece());
+   console.log(piece);
    expect(well.collision(piece)).toBeFalsy();
 });
 

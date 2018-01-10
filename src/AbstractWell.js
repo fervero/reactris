@@ -9,6 +9,7 @@ class AbstractWell {
 		this.width = width;
 		this.depth = width * 2 + 2;
 		this.fields = Array(this.depth);
+		this.defaultPosition = [Math.ceil(width / 2), 0];
 		this.fields.fill(Array(this.width).fill(1));
 	}
 
@@ -52,6 +53,11 @@ class AbstractWell {
 		return !noCollision;
 	}
 
+	pickUp = function (piece) {
+		const newPiece = piece.setPosition(this.defaultPosition);
+		return newPiece;
+	}
+
 	putDown = function (piece) {
 		const absoluteXY = piece.getAbsoluteXY();
 		const newWell = new AbstractWell(this.width);
@@ -73,14 +79,14 @@ class AbstractWell {
 	prun = function () {
 		const fields = this.fields.filter(this.isNotFullLine);
 		const fullLines = this.depth - fields.length;
-		if(fullLines === this.depth) {
+		if (fullLines === this.depth) {
 			return {
 				number: 0,
 				well: this,
 			}
 		}
 		const newWell = new AbstractWell(this.width);
-		for(let i = 0, len = this.depth - fields.length; i < len; i++) {
+		for (let i = 0, len = this.depth - fields.length; i < len; i++) {
 			fields.unshift(this.newRow(this.width));
 		}
 		newWell.fields = fields;

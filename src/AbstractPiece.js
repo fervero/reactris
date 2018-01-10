@@ -1,6 +1,6 @@
 import { arrayCopy } from './utils';
 
-const defaultPosition = [5, 0];
+const defaultPosition = [0, 0];
 const pieceTypes = [
    { type: "S", blocks: [[-1, 1], [0, 1], [0, 0], [1, 0]], },
    { type: "T", blocks: [[-1, 1], [0, 1], [1, 1], [0, 0]], },
@@ -35,6 +35,11 @@ class AbstractPiece {
    }
    getBlocks = function () {
       return arrayCopy(this.blocks);
+   }
+   setPosition = function(position) {
+      const newPiece = new AbstractPiece('', position);
+      newPiece.blocks = arrayCopy(this.blocks);
+      return newPiece;
    }
    /**
     * Returns array of basic blocks in the outside world's coordinates.
