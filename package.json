@@ -11,10 +11,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-css": "node-sass-chokidar src/ -o src/",
+    "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "node-sass-chokidar": "^0.0.3",
     "serve": "^6.4.4"
   }
 }

@@ -4,28 +4,29 @@ import './Brick.css';
 class Brick extends Component {
    constructor(props) {
       super(props);
+      const shake = props.dead ?
+         { transform: "rotate(" + (Math.round((Math.random() * 18 - 9))) + "deg)" } : {};
+      this.background_position =
+         (Math.random() * 80 + 10).toFixed(2) + "%" + " " +
+         (Math.random() * 80 + 10).toFixed(2) + "%";
       this.state = {
-         shake: {},
+         shake,
          dead: false,
       }
    }
-   componentWillReceiveProps(nextProps) {
-      if ((nextProps.dead) && (!this.state.dead)) {
-         const shake = { transform: "rotate(" + (Math.round((Math.random() * 15 - 7.5))) + "deg)" };
-         this.setState({
-            shake,
-            dead: true,
-         });
-      }
-   }
+
    render() {
       const style = Object.assign(
-         { top: this.props.y * 24, left: this.props.x * 24 },
+         {
+            top: (this.props.y - 2) * this.props.height + "%",
+            left: this.props.x * this.props.width + "%",
+            backgroundPosition: this.background_position
+         },
          this.state.shake
       );
       return (
          <div
-            className={"brick " + (this.props.dead ? "brick_dead" : "")}
+            className={"brick " + this.props.style}
             style={style}>
          </div>
       );

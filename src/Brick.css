@@ -1,10 +1,19 @@
 .brick {
-	width: 24px;
-	height: 24px;
-	background-color: darkgoldenrod;
+	background-color: goldenrod;
 	position: absolute;
+	border-width: 1px 1px  2px 2px;
+	border-style: solid;
+	border-color: darkgoldenrod;
+}
+
+.brick.brick_preview {
+	width: 25%;
+	height: 50%;
 }
 
 .brick_dead {
 	background-color: darkblue;
+	border: 1px solid black;
+	background-image: url('assets/rock3.JPG');
+	background-size: 1000% 1000%; 
 }

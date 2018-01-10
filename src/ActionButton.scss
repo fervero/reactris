@@ -1,0 +1,10 @@
+@import './colors.scss';
+
+.btn {
+	background-color: $color-btn;
+	color: $color-btn-front;
+	display: block;
+	font-size: 1.25rem;
+	padding: 0.5em;
+	font-weight: bold;
+}

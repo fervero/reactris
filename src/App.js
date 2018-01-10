@@ -4,45 +4,67 @@ import './App.css';
 import { AbstractWell } from './AbstractWell';
 import { AbstractPiece } from './AbstractPiece';
 import { Well } from './Well';
+import { Aside } from './Aside';
+import { Header } from './Header';
+import { Footer } from './Footer';
+import { StylePlugin } from './StylePlugin';
 const defaultInterval = 150;
 
 class App extends Component {
    constructor() {
       super();
-      const well = new AbstractWell();
-      this.state = {
+      this.state = this.initialState(10);
+      MouseTrap.bind('a', this.movePieceLeft);
+      MouseTrap.bind('d', this.movePieceRight);
+      MouseTrap.bind('s', this.rotatePiece);
+      MouseTrap.bind('p', this.togglePause);
+      MouseTrap.bind('space', this.drop);
+      this.state.gameLoopId = setInterval(this.gameStep, defaultInterval);
+   };
+
+   initialState = (width = 10) => {
+      const well = new AbstractWell(width);
+      return {
          well,
          nextPiece: new AbstractPiece(),
          currentPiece: well.pickUp(new AbstractPiece()),
          score: 0,
          gameLoopId: 0,
-      };
-      MouseTrap.bind('a', this.movePieceLeft);
-      MouseTrap.bind('d', this.movePieceRight);
-      MouseTrap.bind('s', this.rotatePiece);
-      MouseTrap.bind('p', this.togglePause);
-      MouseTrap.bind('space', this.gameStep);
-      MouseTrap.bind('enter', this.nextPiece);
-      this.state.gameLoopId = setInterval(this.gameStep, 150);
+      }
    }
 
-   transformPiece = (transformedPiece) => {
-      if (this.state.well.collision(transformedPiece)) {
-         return;
+   updateState = (...patches) => this.setState(Object.assign({}, this.state, ...patches));
+
+   updatePiece = (updatedPiece) => this.updateState({ currentPiece: updatedPiece });
+
+   checkAndUpdatePiece = (transformedPiece) => {
+      if (!this.state.well.collision(transformedPiece)) {
+         this.updatePiece(transformedPiece)
       }
-      let newState = {};
-      Object.assign(newState, this.state, { currentPiece: transformedPiece });
-      this.setState(newState);
    }
 
    movePieceRight = () => {
       const movedPiece = this.state.currentPiece.moveRight(1);
-      this.transformPiece(movedPiece);
+      this.checkAndUpdatePiece(movedPiece);
    }
 
    movePieceLeft = () => {
       const movedPiece = this.state.currentPiece.moveLeft(1);
-      this.transformPiece(movedPiece);
+      this.checkAndUpdatePiece(movedPiece);
+   }
+
+   drop = () => {
+      let movedPiece = this.state.currentPiece;
+      let temp;
+      while (!this.state.well.collision(temp = movedPiece.moveDown())) {
+         movedPiece = temp;
+      }
+      this.updatePiece(movedPiece);
+   }
+
+   rotatePiece = () => {
+      const movedPiece = this.state.currentPiece.rotate();
+      this.checkAndUpdatePiece(movedPiece);
    }
 
    gameStep = () => {
@@ -50,61 +72,74 @@ class App extends Component {
       if (this.state.well.collision(movedPiece)) {
          this.nextPiece();
       } else {
-         this.transformPiece(movedPiece);
+         this.updatePiece(movedPiece);
       }
-   }
-
-   rotatePiece = () => {
-      const movedPiece = this.state.currentPiece.rotate();
-      this.transformPiece(movedPiece);
    }
 
    nextPiece = () => {
       const newWell = this.state.well.putDown(this.state.currentPiece);
       const fullLines = newWell.prun();
-      const well = (fullLines.number > 0) ? fullLines.well : newWell;
-      const newScore = this.state.score + fullLines.number;
-      const newState = Object.assign(
-         {},
-         this.state,
+      const score = this.state.score + fullLines.number;
+      const newState =
          {
-            well,
-            currentPiece: well.pickUp(this.state.nextPiece),
+            well: fullLines.well,
+            currentPiece: fullLines.well.pickUp(this.state.nextPiece),
             nextPiece: new AbstractPiece(),
-            score: newScore,
-         },
-      );
-      this.setState(newState);
+            score,
+         }
+      this.updateState(newState);
       if (newState.well.collision(newState.currentPiece)) {
          this.stopGame();
       }
    }
 
-   stopGame = () => {
+   newGame = () => {
       clearInterval(this.state.gameLoopId);
-      this.setState(Object.assign({}, this.state, { gameLoopId: 0 }))
+      const gameLoopId = setInterval(this.gameStep, defaultInterval);
+      this.updateState(this.initialState(this.state.width), { gameLoopId });
    }
 
-   startGame = () => {
-      const gameLoopId = setInterval(this.gameStep, 150);
-      this.setState(Object.assign({}, this.state, { gameLoopId }));
+   stopGame = () => {
+      clearInterval(this.state.gameLoopId);
+      this.updateState({ gameLoopId: 0 });
+   }
+
+   unpauseGame = () => {
+      const gameLoopId = setInterval(this.gameStep, defaultInterval);
+      this.updateState({ gameLoopId });
    }
 
    togglePause = () => {
       if (this.state.gameLoopId) {
          this.stopGame()
       } else {
-         this.startGame();
+         this.unpauseGame();
       }
    }
 
    render() {
       return (
          <div className="App">
-            <h2 className='score'>Score: {this.state.score}</h2>
-            <Well
-               well={this.state.well}
-               piece={this.state.currentPiece.getAbsoluteXY()} />
+            <StylePlugin width={this.state.well.width} />
+            <Header title="Reactris" />
+            <div className="panel panel_main">
+               <Well
+                  pause={this.togglePause}
+                  well={this.state.well}
+                  piece={this.state.currentPiece.getAbsoluteXY()} />
+            </div>
+            <div className="panel panel_aside">
+               <Aside
+                  score={this.state.score}
+                  next={this.state.nextPiece.setPosition([2, 2]).getAbsoluteXY()}
+                  newGame={this.newGame}
+               />
+            </div>
+            <Footer
+               left={this.movePieceLeft}
+               right={this.movePieceRight}
+               rotate={this.rotatePiece}
+            />
          </div>
       );
    }

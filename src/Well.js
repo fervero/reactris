@@ -4,17 +4,31 @@ import { Brick } from './Brick';
 
 function Well(props) {
    const piece = props.piece;
-   const width = props.well.width;
-   const depth = props.well.depth;
+   const width = 100/props.well.width;
+   const height = width/2;
    const deadBricks = props.well.getDeadBricks();
 
+   const brick = ([x, y]) =>
+      ({
+         height, width, x, y,
+      });
+
    const drawBrick = ([coordX, coordY, id], i) =>
-      (<Brick x={coordX} y={coordY} key={"l" + i} />);
+      (<Brick
+         {...brick([coordX, coordY]) }
+         key={"l" + i}
+      />);
+
    const drawDeadBrick = ([coordX, coordY, id], i) =>
-      (<Brick dead="true" x={coordX} y={coordY} key={"f"+id} />);
+      (<Brick
+         {...brick([coordX, coordY]) }
+         dead="true"
+         key={"f" + id}
+         style="brick_dead"
+      />);
 
    return (
-      <div className='well' style={{ width: width * 24, height: depth * 24 }}>
+      <div className='well' onClick={props.pause}>
          {piece.map(drawBrick)}
          {deadBricks.map(drawDeadBrick)}
       </div>
