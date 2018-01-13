@@ -1,10 +1,26 @@
 @import '../colors.scss';
 
 .btn {
-	background-color: $color-btn;
-	color: $color-btn-front;
+	background-color: $color-widget;
+	color: $color-secondary;
 	display: block;
 	font-size: 1.25rem;
 	padding: 0.5em;
 	font-weight: bold;
+}
+
+@keyframes pulse {
+	from {
+		background-color: $color-widget;
+	}
+	50% {
+		background-color: lighten($color-widget, 30%);
+	}
+	to {
+		background-color: $color-widget;
+	}
+}
+
+.press_me {
+	animation: pulse 1s linear infinite;
 }

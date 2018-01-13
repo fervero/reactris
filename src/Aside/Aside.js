@@ -10,7 +10,7 @@ function Aside(props) {
          <Preview piece={props.next} />
          <div className="heading">Score:</div>
          <div className="score_box">{props.score}</div>
-         <ActionButton action={props.newGame} description="Play!" />
+         <ActionButton action={props.newGame} attention={props.firstGame} description="Play!" />
       </div>
    );
 }

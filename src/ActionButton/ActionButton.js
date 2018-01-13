@@ -10,7 +10,7 @@ class ActionButton extends Component {
 	}
 	render() {
 		return <button
-			className="btn"
+			className={"btn" + (this.props.attention ? " press_me" : "")}
 			onClick={this.action}
 			ref={this.getButtonDOM}
 		>{this.props.description}</button>

@@ -1,0 +1,19 @@
+.modal {
+  position: absolute;
+  width: 70%;
+  left: 15%;
+  top: 20%;
+  color: #1a2930;
+  z-index: 10;
+  text-align: center;
+  vertical-align: middle;
+  opacity: 0.95;
+  box-shadow: 0px 0px 24px 8px #f7c331;
+  border: 2px groove #1a2930;
+  background-color: #FEFCFB; }
+  .modal span {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 2.2rem;
+    padding: 1.8rem;
+    font-style: italic; }

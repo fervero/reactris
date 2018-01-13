@@ -5,3 +5,14 @@
   font-size: 1.25rem;
   padding: 0.5em;
   font-weight: bold; }
+
+@keyframes pulse {
+  from {
+    background-color: #f7c331; }
+  50% {
+    background-color: #fdeec4; }
+  to {
+    background-color: #f7c331; } }
+
+.press_me {
+  animation: pulse 1s linear infinite; }

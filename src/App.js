@@ -8,22 +8,26 @@ import { Aside } from './Aside/Aside';
 import { Header } from './Header/Header';
 import { Footer } from './Footer/Footer';
 import { StylePlugin } from './StylePlugin/StylePlugin';
+import { Modal } from './Modal/Modal';
 const defaultInterval = 150;
 
 class App extends Component {
    constructor() {
       super();
-      this.state = this.initialState(10);
-      this.state.gameLoopId = setInterval(this.gameStep, defaultInterval);
-      this.bindKeyboard();
+      this.state = Object.assign(this.initialState(10), { firstGame: true });
    };
 
    bindKeyboard = () => {
+      this.unbindKeyboard();
       MouseTrap.bind('a', this.movePieceLeft);
       MouseTrap.bind('d', this.movePieceRight);
       MouseTrap.bind('s', this.rotatePiece);
       MouseTrap.bind('p', this.togglePause);
       MouseTrap.bind('space', this.drop);
+   }
+
+   unbindPause = () => {
+      MouseTrap.unbind('p');
    }
 
    unbindKeyboard = () => {
@@ -33,6 +37,9 @@ class App extends Component {
    triggerLeft = () => MouseTrap.trigger('a');
    triggerRight = () => MouseTrap.trigger('d');
    triggerRotate = () => MouseTrap.trigger('s');
+   triggerPause = () => MouseTrap.trigger('p');
+
+
 
    initialState = (width = 10) => {
       const well = new AbstractWell(width);
@@ -42,6 +49,9 @@ class App extends Component {
          currentPiece: well.pickUp(new AbstractPiece()),
          score: 0,
          gameLoopId: 0,
+         paused: false,
+         gameOver: false,
+         firstGame: false
       }
    }
 
@@ -101,7 +111,7 @@ class App extends Component {
          }
       this.updateState(newState);
       if (newState.well.collision(newState.currentPiece)) {
-         this.stopGame();
+         this.gameOver();
       }
    }
 
@@ -109,6 +119,13 @@ class App extends Component {
       clearInterval(this.state.gameLoopId);
       const gameLoopId = setInterval(this.gameStep, defaultInterval);
       this.updateState(this.initialState(this.state.width), { gameLoopId });
+      this.bindKeyboard();
+   }
+
+   gameOver = () => {
+      this.stopGame();
+      this.updateState({ gameOver: true });
+      this.unbindPause();
    }
 
    stopGame = () => {
@@ -117,17 +134,22 @@ class App extends Component {
       this.unbindKeyboard();
    }
 
+   pauseGame = () => {
+      this.stopGame();
+      this.updateState({ paused: true });
+   }
+
    unpauseGame = () => {
       const gameLoopId = setInterval(this.gameStep, defaultInterval);
-      this.updateState({ gameLoopId });
+      this.updateState({ gameLoopId }, { paused: false });
       this.bindKeyboard();
    }
 
    togglePause = () => {
-      if (this.state.gameLoopId) {
-         this.stopGame()
-      } else {
+      if (this.state.paused) {
          this.unpauseGame();
+      } else {
+         this.pauseGame()
       }
    }
 
@@ -135,10 +157,12 @@ class App extends Component {
       return (
          <div className="App">
             <StylePlugin width={this.state.well.width} />
+            {this.state.paused ? <Modal message="Paused..." action={this.triggerPause} /> : null}
+            {this.state.gameOver ? <Modal message="Game Over!" action={this.newGame} /> : null}
             <Header title="Reactris" />
             <div className="panel panel_main">
                <Well
-                  pause={this.togglePause}
+                  pause={this.triggerPause}
                   well={this.state.well}
                   piece={this.state.currentPiece.getAbsoluteXY()} />
             </div>
@@ -146,6 +170,7 @@ class App extends Component {
                score={this.state.score}
                next={this.state.nextPiece.setPosition([2, 2]).getAbsoluteXY()}
                newGame={this.newGame}
+               firstGame={this.state.firstGame}
             />
             <Footer
                left={this.triggerLeft}
