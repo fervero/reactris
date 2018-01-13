@@ -1,3 +1,6 @@
+html {
+  min-width: 480px; }
+
 body {
   background-color: #c5c1c0;
   color: #0a1612; }

@@ -7,7 +7,7 @@ class Brick extends Component {
       const shake = props.dead ?
          { transform: "rotate(" + (Math.round((Math.random() * 18 - 9))) + "deg)" } : {};
       this.background_position =
-         (Math.random() * 80 + 10).toFixed(2) + "%" + " " +
+         (Math.random() * 80 + 10).toFixed(2) + "% " +
          (Math.random() * 80 + 10).toFixed(2) + "%";
       this.state = {
          shake,
@@ -26,7 +26,7 @@ class Brick extends Component {
       );
       return (
          <div
-            className={"brick " + this.props.style}
+            className={"brick " + this.props.styling}
             style={style}>
          </div>
       );

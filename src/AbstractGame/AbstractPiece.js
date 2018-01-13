@@ -1,4 +1,4 @@
-import { arrayCopy } from './utils';
+import { arrayCopy } from '../utils';
 
 const defaultPosition = [0, 0];
 const pieceTypes = [

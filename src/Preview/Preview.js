@@ -1,6 +1,6 @@
 import React from 'react';
 import './Preview.css';
-import { Brick } from './Brick';
+import { Brick } from '../Brick/Brick';
 
 function Preview(props) {
    const piece = props.piece;
@@ -11,7 +11,7 @@ function Preview(props) {
          x={coordX}
          y={coordY}
          key={"l" + i}
-         style="brick_preview"
+         styling="brick_preview"
       />);
 
    return (

@@ -1,5 +1,4 @@
 import React from 'react';
-import './Well.css';
 import './Header.css';
 
 function Header(props) {

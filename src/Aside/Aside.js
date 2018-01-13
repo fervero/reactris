@@ -1,16 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './Aside.css';
-import { Brick } from './Brick';
-import { ActionButton } from './ActionButton';
-import { Preview } from './Preview';
+import { ActionButton } from '../ActionButton/ActionButton';
+import { Preview } from '../Preview/Preview';
 
 function Aside(props) {
    return (
-      <div className='aside'>
+      <div className='panel panel_aside'>
          <div className="heading">Next:</div>
          <Preview piece={props.next} />
          <div className="heading">Score:</div>
-         <div>{props.score}</div>
+         <div className="score_box">{props.score}</div>
          <ActionButton action={props.newGame} description="Play!" />
       </div>
    );

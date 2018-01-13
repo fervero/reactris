@@ -1,4 +1,4 @@
-import { arrayCopy } from './utils';
+import { arrayCopy } from '../utils';
 
 class AbstractWell {
 	/**

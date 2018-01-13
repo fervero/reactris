@@ -1,26 +1,38 @@
 import React, { Component } from 'react';
 import MouseTrap from 'mousetrap';
 import './App.css';
-import { AbstractWell } from './AbstractWell';
-import { AbstractPiece } from './AbstractPiece';
-import { Well } from './Well';
-import { Aside } from './Aside';
-import { Header } from './Header';
-import { Footer } from './Footer';
-import { StylePlugin } from './StylePlugin';
+import { AbstractWell } from './AbstractGame/AbstractWell';
+import { AbstractPiece } from './AbstractGame/AbstractPiece';
+import { Well } from './Well/Well';
+import { Aside } from './Aside/Aside';
+import { Header } from './Header/Header';
+import { Footer } from './Footer/Footer';
+import { StylePlugin } from './StylePlugin/StylePlugin';
 const defaultInterval = 150;
 
 class App extends Component {
    constructor() {
       super();
       this.state = this.initialState(10);
+      this.state.gameLoopId = setInterval(this.gameStep, defaultInterval);
+      this.bindKeyboard();
+   };
+
+   bindKeyboard = () => {
       MouseTrap.bind('a', this.movePieceLeft);
       MouseTrap.bind('d', this.movePieceRight);
       MouseTrap.bind('s', this.rotatePiece);
       MouseTrap.bind('p', this.togglePause);
       MouseTrap.bind('space', this.drop);
-      this.state.gameLoopId = setInterval(this.gameStep, defaultInterval);
-   };
+   }
+
+   unbindKeyboard = () => {
+      MouseTrap.unbind(['a', 'd', 's', 'space']);
+   }
+
+   triggerLeft = () => MouseTrap.trigger('a');
+   triggerRight = () => MouseTrap.trigger('d');
+   triggerRotate = () => MouseTrap.trigger('s');
 
    initialState = (width = 10) => {
       const well = new AbstractWell(width);
@@ -102,11 +114,13 @@ class App extends Component {
    stopGame = () => {
       clearInterval(this.state.gameLoopId);
       this.updateState({ gameLoopId: 0 });
+      this.unbindKeyboard();
    }
 
    unpauseGame = () => {
       const gameLoopId = setInterval(this.gameStep, defaultInterval);
       this.updateState({ gameLoopId });
+      this.bindKeyboard();
    }
 
    togglePause = () => {
@@ -128,17 +142,15 @@ class App extends Component {
                   well={this.state.well}
                   piece={this.state.currentPiece.getAbsoluteXY()} />
             </div>
-            <div className="panel panel_aside">
-               <Aside
-                  score={this.state.score}
-                  next={this.state.nextPiece.setPosition([2, 2]).getAbsoluteXY()}
-                  newGame={this.newGame}
-               />
-            </div>
+            <Aside
+               score={this.state.score}
+               next={this.state.nextPiece.setPosition([2, 2]).getAbsoluteXY()}
+               newGame={this.newGame}
+            />
             <Footer
-               left={this.movePieceLeft}
-               right={this.movePieceRight}
-               rotate={this.rotatePiece}
+               left={this.triggerLeft}
+               right={this.triggerRight}
+               rotate={this.triggerRotate}
             />
          </div>
       );

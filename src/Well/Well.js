@@ -1,6 +1,6 @@
 import React from 'react';
 import './Well.css';
-import { Brick } from './Brick';
+import { Brick } from '../Brick/Brick';
 
 function Well(props) {
    const piece = props.piece;
@@ -24,7 +24,7 @@ function Well(props) {
          {...brick([coordX, coordY]) }
          dead="true"
          key={"f" + id}
-         style="brick_dead"
+         styling="brick_dead"
       />);
 
    return (

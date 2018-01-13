@@ -1,5 +1,9 @@
 @import './colors.scss';
 
+html {
+  min-width: 480px;
+}
+
 body {
   background-color: $background;
   color: $color-main;

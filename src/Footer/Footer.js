@@ -1,7 +1,6 @@
 import React from 'react';
-import './Well.css';
 import './Footer.css';
-import { ActionButton } from './ActionButton';
+import { ActionButton } from '../ActionButton/ActionButton';
 
 function Footer(props) {
    return (

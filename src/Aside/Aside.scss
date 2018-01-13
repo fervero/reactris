@@ -1,0 +1,24 @@
+.panel_aside {
+	display: inline-block;
+	vertical-align: top;
+	.btn {
+		width: 60%;
+		margin: 0 auto;
+		font-style: italic;
+	}
+	.heading {
+		font-size: 1.8rem;
+	}	
+	.score_box {
+		font-family: monospace;
+		width: 60%;
+		box-sizing: border-box;
+		margin: 0.6rem auto 1.4rem auto;
+		text-align: right;
+		padding-right: 0.5em;
+		background-color: white;
+		color: black;
+		font-size: 1.75rem;
+	}
+}
+

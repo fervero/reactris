@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import './ActionButton.css';
 
 class ActionButton extends Component {
-	constructor(props) {
-		super(props);
-	}
 	getButtonDOM =
 		(buttonDOM) => this.buttonDOM = buttonDOM;
 	action = () => {
