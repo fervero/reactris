@@ -100,7 +100,7 @@ class App extends Component {
 
    nextPiece = () => {
       const newWell = this.state.well.putDown(this.state.currentPiece);
-      const fullLines = newWell.prun();
+      const fullLines = newWell.prune();
       const score = this.state.score + fullLines.number;
       const newState =
          {

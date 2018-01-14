@@ -52,7 +52,7 @@ it("Piece put in an already occupied place causes collision", () => {
 
 it("Detects a full line", () => {
    const well = new AbstractWell(10);
-   const noFullLines = well.prun();
+   const noFullLines = well.prune();
    expect(noFullLines.number).toEqual(0);
    const [piece1,
       piece2,

@@ -88,7 +88,7 @@ class AbstractWell {
 	 * Finds full lines, deletes if any, tops up with empty rows if necessary,
 	 * returns a number and a new well.
 	 */
-	prun = function () {
+	prune = function () {
 		const fields = this.fields.filter(this.isNotFullLine);
 		const fullLines = this.depth - fields.length;
 		if (fullLines === this.depth) {
