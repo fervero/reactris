@@ -1,4 +1,4 @@
-import { AbstractPiece, pieceTypes } from './AbstractPiece';
+import AbstractPiece, { pieceTypes } from './AbstractPiece';
 
 const asymmetricalPieces = pieceTypes.filter((x) => (x.type !== "O"));
 

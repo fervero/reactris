@@ -90,4 +90,5 @@ class AbstractPiece {
    randomPiece = randomPiece;
 }
 
-export { AbstractPiece, pieceTypes };
+export { pieceTypes };
+export default AbstractPiece;

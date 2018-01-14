@@ -1,7 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './Aside.css';
-import { ActionButton } from '../ActionButton/ActionButton';
-import { Preview } from '../Preview/Preview';
+import ActionButton from '../ActionButton/ActionButton';
+import Preview from '../Preview/Preview';
 
 function Aside(props) {
    return (
@@ -15,5 +16,8 @@ function Aside(props) {
    );
 }
 
+const mapStateToProps = (state) => ({
+   firstGame: state.firstGame
+});
 
-export { Aside };
+export default connect(mapStateToProps)(Aside);

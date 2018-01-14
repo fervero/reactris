@@ -1,6 +1,6 @@
 import React from 'react';
 import './Preview.css';
-import { Brick } from '../Brick/Brick';
+import Brick from '../Brick/Brick';
 
 function Preview(props) {
    const piece = props.piece;
@@ -21,4 +21,4 @@ function Preview(props) {
    );
 }
 
-export { Preview };
+export default Preview;

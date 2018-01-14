@@ -1,11 +1,11 @@
 import React from 'react';
 import './Well.css';
-import { Brick } from '../Brick/Brick';
+import Brick from '../Brick/Brick';
 
 function Well(props) {
    const piece = props.piece;
-   const width = 100/props.well.width;
-   const height = width/2;
+   const width = 100 / props.well.width;
+   const height = width / 2;
    const deadBricks = props.well.getDeadBricks();
 
    const brick = ([x, y]) =>
@@ -35,4 +35,4 @@ function Well(props) {
    );
 }
 
-export { Well };
+export default Well;

@@ -17,4 +17,4 @@ class ActionButton extends Component {
 	}
 }
 
-export { ActionButton };
+export default ActionButton;

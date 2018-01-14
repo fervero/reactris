@@ -1,5 +1,5 @@
-import { AbstractWell } from './AbstractWell';
-import { AbstractPiece } from './AbstractPiece';
+import AbstractWell from './AbstractWell';
+import AbstractPiece from './AbstractPiece';
 
 it("Creates a default well 10 spaces wide and 22 spaces deep", () => {
    const well = new AbstractWell();
@@ -62,6 +62,6 @@ it("Detects a full line", () => {
          new AbstractPiece("I", [8, 1]),
       ];
    const updatedWell = well.putDown(piece1).putDown(piece2).putDown(piece3);
-   const fullLines = updatedWell.prun();
+   const fullLines = updatedWell.prune();
    expect(fullLines.number).toEqual(1);
 });

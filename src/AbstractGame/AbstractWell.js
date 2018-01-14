@@ -109,4 +109,4 @@ class AbstractWell {
 	}
 }
 
-export { AbstractWell }
+export default AbstractWell;

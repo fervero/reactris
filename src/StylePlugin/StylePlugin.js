@@ -15,4 +15,4 @@ function StylePlugin(props) {
    );
 }
 
-export { StylePlugin };
+export default StylePlugin;

@@ -33,4 +33,4 @@ class Brick extends Component {
    }
 }
 
-export { Brick };
+export default Brick;

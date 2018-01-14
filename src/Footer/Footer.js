@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import { ActionButton } from '../ActionButton/ActionButton';
+import ActionButton from '../ActionButton/ActionButton';
 
 function Footer(props) {
    return (
@@ -12,4 +12,4 @@ function Footer(props) {
    );
 }
 
-export { Footer };
+export default Footer;
