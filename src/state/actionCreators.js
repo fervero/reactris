@@ -10,9 +10,11 @@ import {
 	MOVE_RIGHT,
 	ROTATE,
 	DROP,
-	PAUSE,
-	UNPAUSE,
+	UPDATE_PAUSE_ATTRIBUTE,
 } from './actions';
+import { DEFAULT_INTERVAL } from '../utils';
+
+let gameLoopId = 0;
 
 const resetScore = () => ({ type: RESET_SCORE });
 const increaseScore = (val) => ({
@@ -50,15 +52,38 @@ const resetWell = (width) => ({
 	type: WELL_RESET,
 	val: width
 });
-const pause = () => ({
-	type: PAUSE,
+const updatePauseAttribute = (attr) => ({
+	type: UPDATE_PAUSE_ATTRIBUTE,
+	val: attr,
 });
-const unpause = () => ({
-	type: UNPAUSE,
-});
+const pause = () =>
+	(dispatch) => {
+		clearInterval(gameLoopId);
+		gameLoopId = 0;
+		dispatch(updatePauseAttribute(true));
+	}
+const stopGame = () =>
+	(dispatch) => {
+		clearInterval(gameLoopId);
+		gameLoopId = 0;
+	}
+const unpause = () =>
+	(dispatch) => {
+		clearInterval(gameLoopId);
+		gameLoopId = setInterval(() =>
+			dispatch(stepDown()),
+			DEFAULT_INTERVAL);
+		dispatch(updatePauseAttribute(false));
+	}
 const newGame = () => ({
 	type: NEW_GAME,
 });
+
+const startGame = () =>
+	(dispatch) => {
+		dispatch(newGame());
+		dispatch(unpause());
+	}
 
 export {
 	resetScore,
@@ -67,6 +92,7 @@ export {
 	pickUpPiece,
 	resetWell,
 	stepDown,
+	startGame,
 	moveLeft,
 	moveRight,
 	rotate,
@@ -74,4 +100,5 @@ export {
 	pause,
 	unpause,
 	newGame,
+	stopGame,
 };

@@ -9,5 +9,4 @@ export const MOVE_RIGHT = 'moveRight';
 export const ROTATE = 'rotate';
 export const DROP = 'drop';
 export const NEW_GAME = 'newGame';
-export const PAUSE = 'pause';
-export const UNPAUSE = 'unpause';
+export const UPDATE_PAUSE_ATTRIBUTE = 'updatePauseAttr';

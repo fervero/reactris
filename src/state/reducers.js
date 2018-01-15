@@ -9,6 +9,7 @@ import {
 	MOVE_RIGHT,
 	ROTATE,
 	DROP,
+	UPDATE_PAUSE_ATTRIBUTE,
 } from './actions';
 import { DEFAULT_WIDTH } from '../utils';
 import {
@@ -27,7 +28,8 @@ import {
 	drop,
 } from './moveReducers';
 import {
-	newGame
+	newGame,
+	updatePauseAttribute
 } from './gameFlowReducers';
 
 
@@ -66,6 +68,8 @@ const rootReducer = (state = DEFAULT_STATE, action) => {
 			return rotate(state, action);
 		case DROP:
 			return drop(state);
+		case UPDATE_PAUSE_ATTRIBUTE:
+			return updatePauseAttribute(state, action);
 	}
 }
 

@@ -10,34 +10,35 @@ import StylePlugin from './StylePlugin/StylePlugin';
 import Modal from './Modal/Modal';
 import store from './state/store';
 import {
-	newGame,
 	resetWell,
 	stepDown,
 	moveLeft,
 	moveRight,
 	rotate,
 	drop,
+	startGame,
+	stopGame,
+	pause,
+	unpause,
 } from './state/actionCreators';
-import {
-	DEFAULT_INTERVAL,
-	DEFAULT_WIDTH
-} from './utils';
+import { DEFAULT_WIDTH } from './utils';
 
 class App extends Component {
 	constructor(props) {
-		super();
-		this.state = Object.assign(this.initialState(DEFAULT_WIDTH));
+		super(props);
+		this.state = Object.assign({ width: DEFAULT_WIDTH });
 		props.dispatch(resetWell(DEFAULT_WIDTH));
 		store.subscribe(this.watchStore);
 	};
 
 	watchStore = () => {
 		const state = store.getState();
-		if (state.gameOver && this.state.gameLoopId) {
+		if (state.gameOver /*&& this.state.gameLoopId*/) {
 			this.gameOver();
 		}
 	}
 
+// User interface - keyboard & mouse - functions
 	bindKeyboard = () => {
 		this.unbindKeyboard();
 		MouseTrap.bind('a', this.movePieceLeft);
@@ -60,16 +61,8 @@ class App extends Component {
 	triggerRotate = () => MouseTrap.trigger('s');
 	triggerPause = () => MouseTrap.trigger('p');
 
-	initialState = (width = DEFAULT_WIDTH) => {
-		return {
-			gameLoopId: 0,
-			paused: false,
-			width,
-		}
-	}
 
-	updateState = (...patches) => this.setState(Object.assign({}, this.state, ...patches));
-
+	// Piece move functions
 	movePieceRight = () => {
 		this.props.dispatch(moveRight());
 	}
@@ -86,42 +79,38 @@ class App extends Component {
 		this.props.dispatch(drop());
 	}
 
+	// Game control functions
 	gameStep = () => {
-		this.props.dispatch(stepDown(1));
+		this.props.dispatch(stepDown());
 	}
 
 	newGame = () => {
-		clearInterval(this.state.gameLoopId);
-		const gameLoopId = setInterval(this.gameStep, DEFAULT_INTERVAL);
-		this.updateState(this.initialState(this.state.width), { gameLoopId });
 		this.bindKeyboard();
-		this.props.dispatch(newGame());
+		this.props.dispatch(startGame());
 	}
 
 	gameOver = () => {
+		if (this.props.gameOver) return;
 		this.stopGame();
 		this.unbindPause();
 	}
 
 	stopGame = () => {
-		clearInterval(this.state.gameLoopId);
-		this.updateState({ gameLoopId: 0 });
-		this.unbindKeyboard();
+		this.props.dispatch(stopGame());
 	}
 
 	pauseGame = () => {
-		this.stopGame();
-		this.updateState({ paused: true });
+		this.props.dispatch(pause());
+		this.unbindKeyboard();
 	}
 
 	unpauseGame = () => {
-		const gameLoopId = setInterval(this.gameStep, DEFAULT_INTERVAL);
-		this.updateState({ gameLoopId }, { paused: false });
+		this.props.dispatch(unpause());
 		this.bindKeyboard();
 	}
 
 	togglePause = () => {
-		if (this.state.paused) {
+		if (this.props.paused) {
 			this.unpauseGame();
 		} else {
 			this.pauseGame()
@@ -132,7 +121,7 @@ class App extends Component {
 		return (
 			<div className="App">
 				<StylePlugin width={this.state.width} />
-				{this.state.paused ? <Modal message="Paused..." action={this.triggerPause} /> : null}
+				{this.props.paused ? <Modal message="Paused..." action={this.triggerPause} /> : null}
 				{this.props.gameOver ? <Modal message="Game Over!" action={this.newGame} /> : null}
 				<Header title="Reactris" />
 				<div className="panel panel_main">
@@ -152,11 +141,9 @@ class App extends Component {
 	}
 }
 
-// export default App;
-
-
 const mapStateToProps = (state) => ({
 	gameOver: state.gameOver,
+	paused: state.paused,
 });
 
 export default connect(mapStateToProps)(App);
