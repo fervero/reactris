@@ -2,33 +2,41 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import MouseTrap from 'mousetrap';
 import './App.css';
-import AbstractWell from './AbstractGame/AbstractWell';
-import AbstractPiece from './AbstractGame/AbstractPiece';
 import Well from './Well/Well';
 import Aside from './Aside/Aside';
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
 import StylePlugin from './StylePlugin/StylePlugin';
 import Modal from './Modal/Modal';
+import store from './state/store';
 import {
-	startFirstGame,
-	increaseScore,
+	newGame,
 	resetWell,
-	putDownPiece,
 	stepDown,
 	moveLeft,
 	moveRight,
 	rotate,
 	drop,
 } from './state/actionCreators';
-const defaultInterval = 150;
+import {
+	DEFAULT_INTERVAL,
+	DEFAULT_WIDTH
+} from './utils';
 
 class App extends Component {
 	constructor(props) {
 		super();
-		this.state = Object.assign(this.initialState(10));
-		props.dispatch(resetWell(10));
+		this.state = Object.assign(this.initialState(DEFAULT_WIDTH));
+		props.dispatch(resetWell(DEFAULT_WIDTH));
+		store.subscribe(this.watchStore);
 	};
+
+	watchStore = () => {
+		const state = store.getState();
+		if (state.gameOver && this.state.gameLoopId) {
+			this.gameOver();
+		}
+	}
 
 	bindKeyboard = () => {
 		this.unbindKeyboard();
@@ -52,17 +60,15 @@ class App extends Component {
 	triggerRotate = () => MouseTrap.trigger('s');
 	triggerPause = () => MouseTrap.trigger('p');
 
-	initialState = (width = 10) => {
+	initialState = (width = DEFAULT_WIDTH) => {
 		return {
 			gameLoopId: 0,
 			paused: false,
-			width: width,
+			width,
 		}
 	}
 
 	updateState = (...patches) => this.setState(Object.assign({}, this.state, ...patches));
-
-	updatePiece = (updatedPiece) => this.updateState({ currentPiece: updatedPiece });
 
 	movePieceRight = () => {
 		this.props.dispatch(moveRight());
@@ -86,16 +92,14 @@ class App extends Component {
 
 	newGame = () => {
 		clearInterval(this.state.gameLoopId);
-		const gameLoopId = setInterval(this.gameStep, defaultInterval);
+		const gameLoopId = setInterval(this.gameStep, DEFAULT_INTERVAL);
 		this.updateState(this.initialState(this.state.width), { gameLoopId });
 		this.bindKeyboard();
-		this.props.dispatch(startFirstGame());
-		this.props.dispatch(resetWell(10));
+		this.props.dispatch(newGame());
 	}
 
 	gameOver = () => {
 		this.stopGame();
-		this.updateState({ gameOver: true });
 		this.unbindPause();
 	}
 
@@ -111,7 +115,7 @@ class App extends Component {
 	}
 
 	unpauseGame = () => {
-		const gameLoopId = setInterval(this.gameStep, defaultInterval);
+		const gameLoopId = setInterval(this.gameStep, DEFAULT_INTERVAL);
 		this.updateState({ gameLoopId }, { paused: false });
 		this.bindKeyboard();
 	}
@@ -126,24 +130,24 @@ class App extends Component {
 
 	render() {
 		return (
-				<div className="App">
-					<StylePlugin width={this.state.width} />
-					{this.state.paused ? <Modal message="Paused..." action={this.triggerPause} /> : null}
-					{this.props.gameOver ? <Modal message="Game Over!" action={this.newGame} /> : null}
-					<Header title="Reactris" />
-					<div className="panel panel_main">
-						<Well
-							pause={this.triggerPause} />
-					</div>
-					<Aside
-						newGame={this.newGame}
-					/>
-					<Footer
-						left={this.triggerLeft}
-						right={this.triggerRight}
-						rotate={this.triggerRotate}
-					/>
+			<div className="App">
+				<StylePlugin width={this.state.width} />
+				{this.state.paused ? <Modal message="Paused..." action={this.triggerPause} /> : null}
+				{this.props.gameOver ? <Modal message="Game Over!" action={this.newGame} /> : null}
+				<Header title="Reactris" />
+				<div className="panel panel_main">
+					<Well
+						pause={this.triggerPause} />
 				</div>
+				<Aside
+					newGame={this.newGame}
+				/>
+				<Footer
+					left={this.triggerLeft}
+					right={this.triggerRight}
+					rotate={this.triggerRotate}
+				/>
+			</div>
 		);
 	}
 }
@@ -152,7 +156,7 @@ class App extends Component {
 
 
 const mapStateToProps = (state) => ({
-   gameOver: state.gameOver,
+	gameOver: state.gameOver,
 });
 
 export default connect(mapStateToProps)(App);

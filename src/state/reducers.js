@@ -1,5 +1,5 @@
 import {
-	START_FIRST_GAME,
+	NEW_GAME,
 	INCREASE_SCORE,
 	RESET_SCORE,
 	WELL_PUTDOWN,
@@ -10,9 +10,26 @@ import {
 	ROTATE,
 	DROP,
 } from './actions';
-import { increaseScore, resetScore } from './scoreReducers';
-import { putDownPiece, resetWell, stepDown, moveLeft, moveRight, rotate, drop } from './wellReducers';
-import AbstractWell from '../AbstractGame/AbstractWell';
+import { DEFAULT_WIDTH } from '../utils';
+import {
+	increaseScore,
+	resetScore
+} from './scoreReducers';
+import {
+	putDownPiece,
+	resetWell,
+} from './wellReducers';
+import {
+	stepDown,
+	moveLeft,
+	moveRight,
+	rotate,
+	drop,
+} from './moveReducers';
+import {
+	newGame
+} from './gameFlowReducers';
+
 
 const DEFAULT_STATE = {
 	firstGame: true,
@@ -20,18 +37,17 @@ const DEFAULT_STATE = {
 	nextPiece: {},
 	currentPiece: {},
 	score: 0,
+	gameLoopId: 0,
 	gameOver: false,
+	width: DEFAULT_WIDTH,
 }
-
-const startFirstGame = (state) =>
-	resetScore(Object.assign({}, state, { firstGame: false }));
 
 const rootReducer = (state = DEFAULT_STATE, action) => {
 	switch (action.type) {
 		default:
 			return state;
-		case START_FIRST_GAME:
-			return startFirstGame(state);
+		case NEW_GAME:
+			return newGame(state);
 		case INCREASE_SCORE:
 			return increaseScore(state, action);
 		case RESET_SCORE:

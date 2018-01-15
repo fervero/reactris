@@ -1,4 +1,3 @@
-export const START_FIRST_GAME = 'startFirstGame';
 export const RESET_SCORE = 'zeroScore';
 export const INCREASE_SCORE = 'increaseScore';
 export const WELL_PICKUP = 'wellPickup';
@@ -9,3 +8,6 @@ export const MOVE_LEFT = 'moveLeft';
 export const MOVE_RIGHT = 'moveRight';
 export const ROTATE = 'rotate';
 export const DROP = 'drop';
+export const NEW_GAME = 'newGame';
+export const PAUSE = 'pause';
+export const UNPAUSE = 'unpause';
