@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import store from './state/store';
+import { connect } from 'react-redux';
 import MouseTrap from 'mousetrap';
 import './App.css';
 import AbstractWell from './AbstractGame/AbstractWell';
@@ -11,13 +10,24 @@ import Header from './Header/Header';
 import Footer from './Footer/Footer';
 import StylePlugin from './StylePlugin/StylePlugin';
 import Modal from './Modal/Modal';
-import { startFirstGame } from './state/actionCreators';
+import {
+	startFirstGame,
+	increaseScore,
+	resetWell,
+	putDownPiece,
+	stepDown,
+	moveLeft,
+	moveRight,
+	rotate,
+	drop,
+} from './state/actionCreators';
 const defaultInterval = 150;
 
 class App extends Component {
-	constructor() {
+	constructor(props) {
 		super();
 		this.state = Object.assign(this.initialState(10));
+		props.dispatch(resetWell(10));
 	};
 
 	bindKeyboard = () => {
@@ -42,18 +52,11 @@ class App extends Component {
 	triggerRotate = () => MouseTrap.trigger('s');
 	triggerPause = () => MouseTrap.trigger('p');
 
-
-
 	initialState = (width = 10) => {
-		const well = new AbstractWell(width);
 		return {
-			well,
-			nextPiece: new AbstractPiece(),
-			currentPiece: well.pickUp(new AbstractPiece()),
-			score: 0,
 			gameLoopId: 0,
 			paused: false,
-			gameOver: false
+			width: width,
 		}
 	}
 
@@ -61,60 +64,24 @@ class App extends Component {
 
 	updatePiece = (updatedPiece) => this.updateState({ currentPiece: updatedPiece });
 
-	checkAndUpdatePiece = (transformedPiece) => {
-		if (!this.state.well.collision(transformedPiece)) {
-			this.updatePiece(transformedPiece)
-		}
-	}
-
 	movePieceRight = () => {
-		const movedPiece = this.state.currentPiece.moveRight(1);
-		this.checkAndUpdatePiece(movedPiece);
+		this.props.dispatch(moveRight());
 	}
 
 	movePieceLeft = () => {
-		const movedPiece = this.state.currentPiece.moveLeft(1);
-		this.checkAndUpdatePiece(movedPiece);
-	}
-
-	drop = () => {
-		let movedPiece = this.state.currentPiece;
-		let temp;
-		while (!this.state.well.collision(temp = movedPiece.moveDown())) {
-			movedPiece = temp;
-		}
-		this.updatePiece(movedPiece);
+		this.props.dispatch(moveLeft());
 	}
 
 	rotatePiece = () => {
-		const movedPiece = this.state.currentPiece.rotate();
-		this.checkAndUpdatePiece(movedPiece);
+		this.props.dispatch(rotate());
+	}
+
+	drop = () => {
+		this.props.dispatch(drop());
 	}
 
 	gameStep = () => {
-		const movedPiece = this.state.currentPiece.moveDown();
-		if (this.state.well.collision(movedPiece)) {
-			this.nextPiece();
-		} else {
-			this.updatePiece(movedPiece);
-		}
-	}
-
-	nextPiece = () => {
-		const newWell = this.state.well.putDown(this.state.currentPiece);
-		const fullLines = newWell.prune();
-		const score = this.state.score + fullLines.number;
-		const newState =
-			{
-				well: fullLines.well,
-				currentPiece: fullLines.well.pickUp(this.state.nextPiece),
-				nextPiece: new AbstractPiece(),
-				score,
-			}
-		this.updateState(newState);
-		if (newState.well.collision(newState.currentPiece)) {
-			this.gameOver();
-		}
+		this.props.dispatch(stepDown(1));
 	}
 
 	newGame = () => {
@@ -122,7 +89,8 @@ class App extends Component {
 		const gameLoopId = setInterval(this.gameStep, defaultInterval);
 		this.updateState(this.initialState(this.state.width), { gameLoopId });
 		this.bindKeyboard();
-		store.dispatch(startFirstGame());
+		this.props.dispatch(startFirstGame());
+		this.props.dispatch(resetWell(10));
 	}
 
 	gameOver = () => {
@@ -158,21 +126,16 @@ class App extends Component {
 
 	render() {
 		return (
-			<Provider store={store}>
 				<div className="App">
-					<StylePlugin width={this.state.well.width} />
+					<StylePlugin width={this.state.width} />
 					{this.state.paused ? <Modal message="Paused..." action={this.triggerPause} /> : null}
-					{this.state.gameOver ? <Modal message="Game Over!" action={this.newGame} /> : null}
+					{this.props.gameOver ? <Modal message="Game Over!" action={this.newGame} /> : null}
 					<Header title="Reactris" />
 					<div className="panel panel_main">
 						<Well
-							pause={this.triggerPause}
-							well={this.state.well}
-							piece={this.state.currentPiece.getAbsoluteXY()} />
+							pause={this.triggerPause} />
 					</div>
 					<Aside
-						score={this.state.score}
-						next={this.state.nextPiece.setPosition([2, 2]).getAbsoluteXY()}
 						newGame={this.newGame}
 					/>
 					<Footer
@@ -181,9 +144,15 @@ class App extends Component {
 						rotate={this.triggerRotate}
 					/>
 				</div>
-			</Provider>
 		);
 	}
 }
 
-export default App;
+// export default App;
+
+
+const mapStateToProps = (state) => ({
+   gameOver: state.gameOver,
+});
+
+export default connect(mapStateToProps)(App);

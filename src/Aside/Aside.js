@@ -17,7 +17,8 @@ function Aside(props) {
 }
 
 const mapStateToProps = (state) => ({
-   firstGame: state.firstGame
+   firstGame: state.firstGame,
+   score: state.score,
 });
 
 export default connect(mapStateToProps)(Aside);

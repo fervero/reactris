@@ -1,9 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './Preview.css';
 import Brick from '../Brick/Brick';
 
 function Preview(props) {
-   const piece = props.piece;
+   const piece = props.nextPiece.setPosition([2,2]).getAbsoluteXY();
    const drawBrick = ([coordX, coordY, id], i) =>
       (<Brick
          height="50"
@@ -16,9 +17,14 @@ function Preview(props) {
 
    return (
       <div className='preview'>
-         {piece.map(drawBrick)}
+         {props.firstGame ? null : piece.map(drawBrick)}
       </div>
    );
 }
 
-export default Preview;
+const mapStateToProps = (state) => ({
+   firstGame: state.firstGame,
+   nextPiece: state.nextPiece,
+});
+
+export default connect(mapStateToProps)(Preview);

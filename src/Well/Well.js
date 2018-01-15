@@ -1,9 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './Well.css';
 import Brick from '../Brick/Brick';
 
 function Well(props) {
-   const piece = props.piece;
+   const piece = props.piece.getAbsoluteXY();
    const width = 100 / props.well.width;
    const height = width / 2;
    const deadBricks = props.well.getDeadBricks();
@@ -29,10 +30,17 @@ function Well(props) {
 
    return (
       <div className='well' onClick={props.pause}>
-         {piece.map(drawBrick)}
+         {props.firstGame ? null : piece.map(drawBrick)}
          {deadBricks.map(drawDeadBrick)}
       </div>
    );
 }
 
-export default Well;
+const mapStateToProps = (state) => {
+   return ({
+   firstGame: state.firstGame,
+   well: state.well,
+   piece: state.currentPiece,
+})};
+
+export default connect(mapStateToProps)(Well);
