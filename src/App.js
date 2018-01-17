@@ -28,17 +28,15 @@ class App extends Component {
 		super(props);
 		this.state = Object.assign({ width: DEFAULT_WIDTH });
 		props.dispatch(resetWell(DEFAULT_WIDTH));
-		store.subscribe(this.watchStore);
 	};
 
-	watchStore = () => {
-		const state = store.getState();
-		if (state.gameOver /*&& this.state.gameLoopId*/) {
+	componentWillReceiveProps = (props) => {
+		if(props.gameOver) {
 			this.gameOver();
 		}
 	}
 
-// User interface - keyboard & mouse - functions
+	// User interface - keyboard & mouse - functions
 	bindKeyboard = () => {
 		this.unbindKeyboard();
 		MouseTrap.bind('a', this.movePieceLeft);
