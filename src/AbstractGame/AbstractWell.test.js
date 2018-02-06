@@ -62,6 +62,20 @@ it("Detects a full line", () => {
          new AbstractPiece("I", [8, 1]),
       ];
    const updatedWell = well.putDown(piece1).putDown(piece2).putDown(piece3);
-   const fullLines = updatedWell.prun();
+   const fullLines = updatedWell.prune();
    expect(fullLines.number).toEqual(1);
+});
+
+it("Counts dead bricks properly", () => {
+   const well = new AbstractWell(10);
+   const [piece1,
+      piece2,
+      piece3,] = [
+         new AbstractPiece("O", [1, 6]),
+         new AbstractPiece("I", [4, 3]),
+         new AbstractPiece("I", [8, 1]),
+      ];
+   const updatedWell = well.putDown(piece1).putDown(piece2).putDown(piece3);
+   const deadBricks = updatedWell.getDeadBricks();
+   expect(deadBricks.length).toEqual(12);
 });

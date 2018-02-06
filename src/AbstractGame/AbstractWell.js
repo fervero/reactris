@@ -1,5 +1,13 @@
 import { arrayCopy } from '../utils';
 
+const getDeadBricksFromRow = (row, rowNumber) => (
+	row
+		.map((x, i) => [i, rowNumber, x])
+		.filter(([x, y, id]) => id > 0)
+);
+
+const newRow = (width) => Array(width).fill(0);
+
 class AbstractWell {
 	/**
 	 * 
@@ -10,31 +18,25 @@ class AbstractWell {
 		this.depth = width * 2 + 2;
 		this.fields = Array(this.depth);
 		this.defaultPosition = [Math.ceil(width / 2), 2];
-		this.fields.fill(this.newRow());
+		this.fields.fill(newRow());
 		this.idGen = this.uniqId();
 	}
 
-	nextWell = function() {
-		return Object.assign(new AbstractWell(this.width), {idGen: this.idGen});
+	nextWell = function () {
+		return Object.assign(new AbstractWell(this.width), { idGen: this.idGen });
 	}
 
 	uniqId = function* () {
 		let id = 0;
-		while(true) {
-			yield(++id);
+		while (true) {
+			yield (++id);
 		}
 	}
 
 	getDeadBricks = function () {
-		const deadBricks = [];
-		for (let y = this.depth - 1; y > -1; y--) {
-			for (let x = 0; x < this.width; x++) {
-				if (!this.isFree(x, y)) {
-					deadBricks.push([x, y, this.fields[y][x]]);
-				}
-			}
-		}
-		return deadBricks;
+		return this.fields
+			.map(getDeadBricksFromRow)
+			.reduce((rowA, rowB) => [...rowA, ...rowB], [])
 	}
 
 	/**
@@ -82,7 +84,6 @@ class AbstractWell {
 
 	isNotFullLine = (arr) => !arr.reduce(this.isOccupiedField, true);
 
-	newRow = (width) => Array(this.width).fill(0);
 
 	/**
 	 * Finds full lines, deletes if any, tops up with empty rows if necessary,
@@ -99,7 +100,7 @@ class AbstractWell {
 		}
 		const newWell = this.nextWell();
 		for (let i = 0, len = this.depth - fields.length; i < len; i++) {
-			fields.unshift(this.newRow(this.width));
+			fields.unshift(newRow(this.width));
 		}
 		newWell.fields = fields;
 		return {
