@@ -18,7 +18,7 @@ class AbstractWell {
 		this.depth = width * 2 + 2;
 		this.fields = Array(this.depth);
 		this.defaultPosition = [Math.ceil(width / 2), 2];
-		this.fields.fill(newRow());
+		this.fields.fill(newRow(width));
 		this.idGen = this.uniqId();
 	}
 

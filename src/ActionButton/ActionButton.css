@@ -1,6 +1,6 @@
 .btn {
-  background-color: #f7c331;
-  color: #1a2930;
+  background-color: #87B9F6;
+  color: #04274C;
   display: block;
   font-size: 1.25rem;
   padding: 0.5em;
@@ -8,11 +8,11 @@
 
 @keyframes pulse {
   from {
-    background-color: #f7c331; }
+    background-color: #87B9F6; }
   50% {
-    background-color: #fdeec4; }
+    background-color: white; }
   to {
-    background-color: #f7c331; } }
+    background-color: #87B9F6; } }
 
 .press_me {
   animation: pulse 1s linear infinite; }

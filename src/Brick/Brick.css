@@ -1,9 +1,9 @@
 .brick {
-  background-color: goldenrod;
+  background-color: #550C18;
   position: absolute;
   border-width: 0 0 1px 1px;
   border-style: solid;
-  border-color: darkgoldenrod;
+  border-color: #3E0912;
   box-sizing: border-box;
   z-index: -1; }
 
@@ -12,6 +12,6 @@
   height: 50%; }
 
 .brick_dead {
-  background-color: darkblue;
-  border: 1px solid black;
+  background-color: #2F070E;
+  border: 1px solid #1F0509;
   background-image: url("../rock3.jpg"); }
